@@ -20,3 +20,8 @@ junit*.xml
 *.swp
 tslint-rules/
 playwright-videos/
+
+# Local Fedora Chinese build
+.build-cache/
+.build-tools/
+artifacts/

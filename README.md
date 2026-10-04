@@ -1,3 +1,11 @@
+# Fedora 简体中文构建
+
+此 fork 提供 GitHub Desktop 3.6.6 的 Fedora 44 x86_64 中文 RPM。
+
+[中文说明与构建方式](README.zh-CN.md) · [下载 Release](https://github.com/s-infinite-box/desktop/releases)
+
+---
+
 # [GitHub Desktop](https://desktop.github.com)
 
 [GitHub Desktop](https://desktop.github.com/) is an open-source [Electron](https://www.electronjs.org/)-based

@@ -1,0 +1,47 @@
+name: Fedora Chinese RPM
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'Optional release tag; leave empty to build an artifact only'
+        required: false
+        type: string
+  push:
+    tags:
+      - 'v*-fedora-zh.*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    container: fedora:44
+    steps:
+      - name: Install build dependencies
+        run: dnf install -y git gcc-c++ make python3 rpm-build libsecret-devel xz tar gzip findutils curl
+      - uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .node-version
+      - name: Build localized Fedora RPM
+        run: bash script/linux/build-fedora-zh.sh
+      - uses: actions/upload-artifact@v7
+        with:
+          name: github-desktop-fedora-zh-x86_64
+          path: artifacts/
+      - name: Publish GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') || inputs.release_tag != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_TAG: ${{ inputs.release_tag || github.ref_name }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          dnf install -y gh
+          gh release create "$RELEASE_TAG" artifacts/*.rpm artifacts/SHA256SUMS artifacts/build-info.json artifacts/localization-report.json \
+            --target "$GITHUB_SHA" --title "GitHub Desktop 3.6.6 中文版 · Fedora 44" \
+            --notes-file RELEASE-NOTES.zh-CN.md
